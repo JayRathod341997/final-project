@@ -3,9 +3,27 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from streamlit_option_menu import option_menu
+from tumor_detection import tumor_detection_module
+from tensorflow.keras.models import load_model
+import gdown 
 
-# Load the dataset
+
+@st.cache_resource  # Cache to avoid re-downloading on every run
+def load_remote_model():
+    file_id = "1a7gwpStIqHJRUCDtI9Jw6m_Qzma_WFHN"  # Replace with your file ID
+    url = f"https://drive.google.com/uc?id={file_id}"
+    output_file = "brain_tumor_cnn_model_1.h5"
+    gdown.download(url, output_file, quiet=False)
+    return load_model(output_file)
+
+
+
+
 uploaded_file = './mental_health_diagnosis_treatment_.csv'
+
+
+
+
 data = pd.read_csv(uploaded_file)
 st.set_page_config(page_title="Brain Diagnosis & Appointment", page_icon="🩺", layout="wide")
 st.markdown("""
@@ -31,9 +49,8 @@ st.title("Mental Health Diagnosis and Treatment Analysis")
 st.write("This app provides insights into the mental health diagnosis dataset.")
 with st.sidebar:
     menu = option_menu('Mental Health Diagnosis and Treatment Analysis',
-                             
                               ['Overview','Statistics',
-                               'Visualizations',],
+                               'Visualizations','Tumor detection'],
                               icons=['dashboard','activity','heart','person','line-chart'],
                               default_index=0)
 
@@ -84,3 +101,6 @@ elif menu == "Visualizations":
 
     else:
         st.write("Visualization for this data type is not supported.")
+
+elif menu == "Tumor detection":
+    tumor_detection_module()

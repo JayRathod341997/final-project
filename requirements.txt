@@ -6,3 +6,5 @@ numpy
 matplotlib
 streamlit
 streamlit-option-menu
+tensorflow
+gdown

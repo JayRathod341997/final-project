@@ -1,22 +1,11 @@
 import streamlit as st
-from tensorflow.keras.models import load_model
+
 import cv2
 import numpy as np
 from PIL import Image
 from appointment import book_appointment
-import gdown  # Library to download files from Google Drive
+from download_model import load_remote_model
 
-# Function to download the model from Google Drive
-@st.cache_resource  # Cache to avoid re-downloading on every run
-def load_remote_model():
-    file_id = "1a7gwpStIqHJRUCDtI9Jw6m_Qzma_WFHN"  # Replace with your file ID
-    url = f"https://drive.google.com/uc?id={file_id}"
-    output_file = "brain_tumor_cnn_model_1.h5"
-    gdown.download(url, output_file, quiet=False)
-    return load_model(output_file)
-
-# Load the trained model from Google Drive
-model = load_remote_model()
 
 # Function to preprocess the image
 def preprocess_image(image):
@@ -27,19 +16,8 @@ def preprocess_image(image):
     return image
 
 
-# Streamlit UI
-st.title("🧠 Brain Tumor Detection & Appointment Booking App")
-st.write("🔍 Choose an option below to either detect a brain tumor or book an appointment for consultation.")
 
-# Sidebar for feature selection
-option = st.radio("Select an option",
-                  ("🧠 Brain Tumor Detection", "📅 Book an Appointment"))
-
-if option == "🧠 Brain Tumor Detection":
-    st.subheader(
-        "🔬 Upload an MRI image to check for the presence of a brain tumor.")
-
-    # File upload for image
+def upload_file_module(model):
     uploaded_file = st.file_uploader(
         "Choose an MRI image...", type=["jpg", "jpeg", "png"])
 
@@ -61,5 +39,18 @@ if option == "🧠 Brain Tumor Detection":
             st.success(
                 "✅ No tumor detected. Keep up with regular health check-ups to stay healthy! 💪")
 
-elif option == "📅 Book an Appointment":
-    book_appointment()
+def tumor_detection_module():
+    model = load_remote_model()
+    st.title("🧠 Brain Tumor Detection & Appointment Booking App")
+    st.write("🔍 Choose an option below to either detect a brain tumor or book an appointment for consultation.")
+
+    # Sidebar for feature selection
+    option = st.radio("Select an option",
+                    ("🧠 Brain Tumor Detection", "📅 Book an Appointment"))
+
+    if option == "🧠 Brain Tumor Detection":
+        st.subheader(
+            "🔬 Upload an MRI image to check for the presence of a brain tumor.")
+        upload_file_module(model)
+    elif option == "📅 Book an Appointment":
+        book_appointment()

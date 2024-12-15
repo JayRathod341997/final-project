@@ -8,3 +8,4 @@ streamlit
 streamlit-option-menu
 tensorflow
 gdown
+opencv-python

@@ -4,8 +4,19 @@ import cv2
 import numpy as np
 from PIL import Image
 from appointment import book_appointment
-from download_model import load_remote_model
+from tensorflow.keras.models import load_model
+import gdown 
 
+# from download_model import load_remote_model
+
+
+@st.cache_resource  # Cache to avoid re-downloading on every run
+def load_remote_model():
+    file_id = "1a7gwpStIqHJRUCDtI9Jw6m_Qzma_WFHN"  # Replace with your file ID
+    url = f"https://drive.google.com/uc?id={file_id}"
+    output_file = "brain_tumor_cnn_model_1.h5"
+    gdown.download(url, output_file, quiet=False)
+    return load_model(output_file)
 
 # Function to preprocess the image
 def preprocess_image(image):
@@ -17,6 +28,7 @@ def preprocess_image(image):
 
 
 def tumor_detection_module():
+    
     model = load_remote_model()
     st.title("🧠 Brain Tumor Detection & Appointment Booking App")
     st.write("🔍 Choose an option below to either detect a brain tumor or book an appointment for consultation.")

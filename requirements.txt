@@ -8,4 +8,6 @@ streamlit
 streamlit-option-menu
 tensorflow
 gdown
-opencv-python
+opencv-python==4.7.0.72
+numpy==1.21.4
+pillow==8.3.2

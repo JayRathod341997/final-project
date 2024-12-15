@@ -2,17 +2,40 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from streamlit_option_menu import option_menu
 
 # Load the dataset
 uploaded_file = './mental_health_diagnosis_treatment_.csv'
 data = pd.read_csv(uploaded_file)
-
+st.set_page_config(page_title="Brain Diagnosis & Appointment", page_icon="🩺", layout="wide")
+st.markdown("""
+    <style>
+        .sidebar .sidebar-content {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .main {
+            padding: 20px;
+        }
+        .stButton>button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+        }
+    </style>
+""", unsafe_allow_html=True)
 # Streamlit app setup
 st.title("Mental Health Diagnosis and Treatment Analysis")
 st.write("This app provides insights into the mental health diagnosis dataset.")
-
-# Sidebar menu
-menu = st.sidebar.selectbox("Menu", ["Overview", "Statistics", "Visualizations"])
+with st.sidebar:
+    menu = option_menu('Mental Health Diagnosis and Treatment Analysis',
+                             
+                              ['Overview','Statistics',
+                               'Visualizations',],
+                              icons=['dashboard','activity','heart','person','line-chart'],
+                              default_index=0)
 
 if menu == "Overview":
     st.header("Dataset Overview")

@@ -6,12 +6,8 @@ from streamlit_option_menu import option_menu
 from PIL import Image
 import numpy as np
 from PIL import Image
-from appointment import book_appointment
+# from appointment import book_appointment
 from tensorflow.keras.models import load_model
-# import gdown 
-# import cv2
-
-
 
 
 def preprocess_image(image):
@@ -29,13 +25,59 @@ def preprocess_image(image):
     return img
 
 
+def book_appointment():
+    st.subheader("📞 Book an Appointment with a Specialist")
 
+    # Doctor information
+    doctors = [
+        {"name": "Dr. John Doe", "specialization": "Neurosurgeon",
+            "contact": "+1 555-123-4567", "email": "doctor1@example.com"},
+        {"name": "Dr. Jane Smith", "specialization": "Neurologist",
+            "contact": "+1 555-987-6543", "email": "doctor2@example.com"},
+        {"name": "Dr. Robert Brown", "specialization": "Radiologist",
+            "contact": "+1 555-456-7890", "email": "doctor3@example.com"}
+    ]
 
+    # Display doctor information
+    doctor_options = [doctor["name"] for doctor in doctors]
+    selected_doctor = st.selectbox("👨‍⚕️ Select a doctor", doctor_options)
+
+    # Define available time slots
+    time_slots = ["10:00 AM", "11:00 AM", "3:00 PM", "4:00 PM", "5:00 PM", "7:00 PM"]
+
+    # Appointment booking form
+    with st.form(key="appointment_form"):
+        name = st.text_input("👤 Your Name")
+        email = st.text_input("📧 Your Email Address")
+        contact = st.text_input("📞 Your Contact Number")
+        city = st.text_input("🏙️ City")
+        state = st.text_input("🌆 State")
+        country = st.text_input("🌍 Country")
+        date = st.date_input("📅 Preferred Appointment Date")
+        selected_time_slot = st.selectbox("⏰ Select a time slot", time_slots)
+        message = st.text_area("💬 Message (optional)")
+
+        # Submit button
+        submit_button = st.form_submit_button("📤 Submit Appointment Request")
+
+        if submit_button:
+            # Find selected doctor's details
+            doctor = next(doctor for doctor in doctors if doctor["name"] == selected_doctor)
+            doctor_email = doctor["email"]
+
+            subject = "🩺 New Appointment Request"
+            body_to_doctor = f"""
+            Appointment Request from {name} ({email}):
+            🗓️ Appointment Date: {date}
+            Time Slot: {selected_time_slot}
+            Message: {message}
+            """
+            # Send email to doctor
+            send_email(doctor_email, subject, body_to_doctor)
+
+            st.success(f"✅ Appointment request sent! You will receive a confirmation email shortly. 📧")
 
 uploaded_file = './mental_health_diagnosis_treatment_.csv'
-
-
-
 
 data = pd.read_csv(uploaded_file)
 st.set_page_config(page_title="Brain Diagnosis & Appointment", page_icon="🩺", layout="wide")
@@ -63,7 +105,7 @@ st.write("This app provides insights into the mental health diagnosis dataset.")
 with st.sidebar:
     menu = option_menu('Mental Health Diagnosis and Treatment Analysis',
                               ['Overview','Statistics',
-                               'Visualizations','Tumor detection'],
+                               'Visualizations','Tumor detection','📅 Book an Appointment'],
                               icons=['dashboard','activity','heart','person','line-chart'],
                               default_index=0)
 
@@ -117,17 +159,11 @@ elif menu == "Visualizations":
 
 elif menu == "Tumor detection":
     model = load_model("brain_tumor_cnn_model.h5")
-    st.title("🧠 Brain Tumor Detection & Appointment Booking App")
-    st.write("🔍 Choose an option below to either detect a brain tumor or book an appointment for consultation.")
-
-    # Sidebar for feature selection
-    option = st.radio("Select an option",
-                    ("🧠 Brain Tumor Detection", "📅 Book an Appointment"))
-
-    if option == "🧠 Brain Tumor Detection":
-        st.subheader(
+    st.title("🧠 Brain Tumor Detection ")
+    
+    st.subheader(
             "🔬 Upload an MRI image to check for the presence of a brain tumor.")
-        uploaded_file = st.file_uploader(
+    uploaded_file = st.file_uploader(
         "Choose an MRI image...", type=["jpg", "jpeg", "png"])
 
     if uploaded_file is not None:
@@ -147,5 +183,6 @@ elif menu == "Tumor detection":
         else:
             st.success(
                 "✅ No tumor detected. Keep up with regular health check-ups to stay healthy! 💪")
-    elif option == "📅 Book an Appointment":
-        book_appointment()
+
+elif menu == "📅 Book an Appointment":
+    book_appointment()

@@ -3,5 +3,4 @@ __pycache__
 .ipynb
 myenv
 myenv1
-*.h5
 brain_tumor_dataset

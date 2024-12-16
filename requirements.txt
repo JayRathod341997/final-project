@@ -4,6 +4,5 @@ seaborn
 numpy
 matplotlib
 streamlit
-streamlit-option-menu==0.4.0 
-gdown
-opencv-python==4.8.0.74
+streamlit-option-menu==0.4.0
+tensorflow

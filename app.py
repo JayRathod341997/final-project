@@ -3,30 +3,30 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from streamlit_option_menu import option_menu
-
+from PIL import Image
 import numpy as np
 from PIL import Image
 from appointment import book_appointment
 from tensorflow.keras.models import load_model
-import gdown 
+# import gdown 
 # import cv2
 
 
-@st.cache_resource  # Cache to avoid re-downloading on every run
-def load_remote_model():
-    file_id = "1a7gwpStIqHJRUCDtI9Jw6m_Qzma_WFHN"  # Replace with your file ID
-    url = f"https://drive.google.com/uc?id={file_id}"
-    output_file = "brain_tumor_cnn_model_1.h5"
-    gdown.download(url, output_file, quiet=False)
-    return load_model(output_file)
 
-# Function to preprocess the image
+
 def preprocess_image(image):
-    image = np.array(image)  # Convert the image to a NumPy array
-    # image = cv2.resize(image, (128, 128))  # Resize to 128x128
-    image = image / 255.0  # Normalize pixel values
-    image = np.expand_dims(image, axis=0)  # Add batch dimension
-    return image
+    # Resize to match input size
+    img = image.resize((128, 128))
+    # Convert image to numpy array and normalize
+    img = np.array(img) / 255.0
+    # Ensure the image has 3 channels (convert if grayscale)
+    if len(img.shape) == 2:  # Grayscale image
+        img = np.stack((img,) * 3, axis=-1)
+    elif img.shape[-1] != 3:  # Other number of channels
+        raise ValueError("Unexpected number of channels in image")
+    # Expand dimensions to match model's input shape
+    img = np.expand_dims(img, axis=0)
+    return img
 
 
 
@@ -116,7 +116,7 @@ elif menu == "Visualizations":
         st.write("Visualization for this data type is not supported.")
 
 elif menu == "Tumor detection":
-    model = load_remote_model()
+    model = load_model("brain_tumor_cnn_model.h5")
     st.title("🧠 Brain Tumor Detection & Appointment Booking App")
     st.write("🔍 Choose an option below to either detect a brain tumor or book an appointment for consultation.")
 

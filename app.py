@@ -3,12 +3,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from streamlit_option_menu import option_menu
-import cv2
+
 import numpy as np
 from PIL import Image
 from appointment import book_appointment
 from tensorflow.keras.models import load_model
 import gdown 
+# import cv2
+
 
 @st.cache_resource  # Cache to avoid re-downloading on every run
 def load_remote_model():
@@ -21,7 +23,7 @@ def load_remote_model():
 # Function to preprocess the image
 def preprocess_image(image):
     image = np.array(image)  # Convert the image to a NumPy array
-    image = cv2.resize(image, (128, 128))  # Resize to 128x128
+    # image = cv2.resize(image, (128, 128))  # Resize to 128x128
     image = image / 255.0  # Normalize pixel values
     image = np.expand_dims(image, axis=0)  # Add batch dimension
     return image
